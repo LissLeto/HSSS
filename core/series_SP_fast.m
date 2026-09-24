@@ -3,22 +3,18 @@ function [labels,labelsj,wantedNum,para] = series_SP_fast(labels,img,wantedNum,p
 spNum = max(labels(:));
 [M,N] = size(labels);
 
-% 邻接矩阵
 adj = double(GetAdj_mex(uint32(labels), spNum));
-% 如果 spNum 很大，可以试试：
 % adj = sparse(double(GetAdj_mex(uint32(labels), spNum)));
 
 [L,A,B] = imsplit(img);
 labels_vec = labels(:);
 
-% ===== 1) 一次性统计每个超像素的和、均值、大小 =====
 count_vec = accumarray(labels_vec, 1, [spNum,1], @sum, 0);
 
 L_sum = accumarray(labels_vec, L(:), [spNum,1], @sum, 0);
 A_sum = accumarray(labels_vec, A(:), [spNum,1], @sum, 0);
 B_sum = accumarray(labels_vec, B(:), [spNum,1], @sum, 0);
 
-% 这里保持你原 series_SP 里给 Getpara2 用的是“精确均值”
 L_mean_exact = L_sum ./ count_vec;
 A_mean_exact = A_sum ./ count_vec;
 B_mean_exact = B_sum ./ count_vec;
@@ -30,14 +26,12 @@ LAB(:,:,3) = reshape(B_mean_exact(labels_vec), size(B));
 
 %para = Getpara2(LAB);
 
-% 这里保持你原 Get_sp_feature 的写法：分母 + 0.0001
 L_mean_sp = L_sum ./ (count_vec + 0.0001);
 A_mean_sp = A_sum ./ (count_vec + 0.0001);
 B_mean_sp = B_sum ./ (count_vec + 0.0001);
 
 sp_feature = [L_mean_sp, A_mean_sp, B_mean_sp, log(double(count_vec))];
 
-% ===== 2) 超像素代表度 / seed / 最短距离 =====
 psi_sp = Get_psi_sp_fast(adj, sp_feature, para);
 [psi_sorted, order_idx] = sort(psi_sp, 'ascend');
 psi_sp_order = [psi_sorted, order_idx];
@@ -52,7 +46,6 @@ end
 
 %D_gap = 1;
 
-% ===== 3) 主聚类流程 =====
 seed_Cluster = cell(0,1);
 ori_Cluster = num2cell((1:spNum).');
 used = false(spNum,1);
@@ -108,8 +101,6 @@ for i = 1:spNum
             self_LAB = sp_feature(self(2),1:3);
             higherN_LAB = sp_feature(higherN,1:3);
 
-            % 原来是 sqrt((higherN_LAB-self_LAB).^2 * para')
-            % 这里只对最小值开一次 sqrt，结果一致但更快
             D2_sp_LAB = (higherN_LAB - self_LAB).^2 * para(:);
             [minD2, father_pos] = min(D2_sp_LAB);
             minD = sqrt(minD2);
@@ -200,7 +191,6 @@ end
 
 diffLAB = sp_feature(row_idx,1:3) - sp_feature(col_idx,1:3);
 
-% 保持你原公式：sqrt(sum((diff.^2) .* (para.^2)))
 D = sqrt(sum((diffLAB.^2) .* ((para(:)').^2), 2));
 
 boundary_sum = full(sum(adj,2));

@@ -37,7 +37,7 @@ labels(seedIdx) = 1:numel(seedIdx);
 seeds_L=L(seeds);seeds_A=A(seeds);seeds_B=B(seeds);
 [seed_rows,seed_cols]=find(seeds);
 Seed=[seed_rows/M,seed_cols/N,seeds_L,seeds_A,seeds_B];
-w_S=spatial_weight;%距离权重
+w_S=spatial_weight;
 % search_R=range*5/max(max([seed_rows,seed_cols]));
 search_R = range * search_radius_multiplier / ...
     max(max([seed_rows; seed_cols]), 1);
@@ -73,9 +73,9 @@ for dr = -1:1
             continue;
         end
 
-        r0 = max(1,1-dr):min(m,m-dr);   % 当前中心像素位置
+        r0 = max(1,1-dr):min(m,m-dr);
         c0 = max(1,1-dc):min(n,n-dc);
-        r1 = r0 + dr;                   % 邻居位置
+        r1 = r0 + dr;
         c1 = c0 + dc;
 
         dL = L(r1,c1) - L(r0,c0);
@@ -140,12 +140,9 @@ end
 
 win = true(2*r+1);
 
-% 局部最大值
 localMax = ordfilt2(psi, numel(win), win);
 
-% 统计窗口中有多少个位置等于局部最大值
 countMax = conv2(double(psi == localMax), double(win), 'same');
 
-% 唯一最大值才保留
 s = (psi == localMax) & (countMax == 1);
 end
