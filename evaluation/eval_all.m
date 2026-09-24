@@ -1,12 +1,12 @@
-function [BR_ori, BR_ins] = eval_all(labels, Seg, fig_ori, is_disp)
+function [BR, IBR] = eval_all(labels, Seg, fig_ori, is_disp)
 %EVAL_ALL Compute boundary recall metrics for superpixel segmentation.
 %
-%   [BR_ori, BR_ins] = EVAL_ALL(labels, Seg) computes:
-%       BR_ori - Boundary Recall over all ground-truth boundary pixels.
-%       BR_ins - Instance Boundary Recall, i.e. the average Boundary Recall
-%                computed separately for each ground-truth region.
+%   [BR, IBR] = EVAL_ALL(labels, Seg) computes:
+%       BR  - Boundary Recall over all ground-truth boundary pixels.
+%       IBR - Instance Boundary Recall, i.e. the average Boundary Recall
+%             computed separately for each ground-truth region.
 %
-%   [BR_ori, BR_ins] = EVAL_ALL(labels, Seg, fig_ori, is_disp) optionally
+%   [BR, IBR] = EVAL_ALL(labels, Seg, fig_ori, is_disp) optionally
 %   displays a boundary-recall visualization when is_disp is true. In the
 %   visualization, missed GT boundaries are red, recalled GT boundaries are
 %   black, and superpixel-only boundaries are green.
@@ -47,9 +47,9 @@ matchedBoundary = conv2(double(spBoundary), double(kernel), 'same') > 0;
 
 gtBoundaryCount = nnz(gtBoundary);
 if gtBoundaryCount == 0
-    BR_ori = NaN;
+    BR = NaN;
 else
-    BR_ori = nnz(gtBoundary & matchedBoundary) / gtBoundaryCount;
+    BR = nnz(gtBoundary & matchedBoundary) / gtBoundaryCount;
 end
 
 gtLabels = unique(Seg(:));
@@ -64,7 +64,7 @@ for k = 1:numel(gtLabels)
     end
 end
 
-BR_ins = mean(BR_each, 'omitnan');
+IBR = mean(BR_each, 'omitnan');
 
 if is_disp
     if isempty(fig_ori)
