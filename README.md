@@ -1,6 +1,6 @@
-# HSSS
+# Hierarchical Superpixel Segmentation by Searching Seeds
 
-MATLAB source code for our [paper](https://ieeexplore.ieee.org/abstract/document/11691956/) **Hierarchical Superpixel Segmentation by Searching Seeds**, published in T-IP, 2026.
+Source code for our [paper](https://ieeexplore.ieee.org/abstract/document/11691956/) **Hierarchical Superpixel Segmentation by Searching Seeds**, published in IEEE Transactions on Image Processing (TIP), 2026. Doi: 10.1109/TIP.2026.3731595
 
 ## Workflow
 ![HSSS algorithm flowchart](flow.png)
