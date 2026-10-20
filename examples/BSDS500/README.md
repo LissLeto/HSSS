@@ -19,3 +19,8 @@ Each example uses the following naming convention:
 `demo_eval.m` runs HSSS on image 3063 at K=400, evaluates BR and IBR against
 all annotations in `3063_gt.mat`, and visualizes the result using annotation 4.
 `22090_labels.csv` is retained as an additional saved example result.
+
+`selected_image_ids.txt` lists the 27 BSDS500 image IDs used for an additional
+selection. The corresponding dataset images and annotations are not included
+in this repository; obtain BSDS500 separately and match files by image ID.
+BSDS500 remains subject to its own distribution terms.
